@@ -18,3 +18,4 @@ export function getTimeStamp(){
 	var date = new Date();
 	return date.getTime();
 }
+

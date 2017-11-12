@@ -118,10 +118,13 @@ io.on('connection', function(client){
 	    var streamFolder = '../data/'+data.id+'/';
 	    var streamFolderPictures = '../data/'+data.id+'/pictures/';
 	    var streamFolderEmotions = '../data/'+data.id+'/emotions/';
+      var streamFolderSounds = '../data/'+data.id+'/sounds/';
+
 	    if (!fs.existsSync(streamFolder)){
 	      fs.mkdirSync(streamFolder);
 	      fs.mkdirSync(streamFolderPictures);
 	      fs.mkdirSync(streamFolderEmotions);
+        fs.mkdirSync(streamFolderSounds);
 	    }
 	    var imagePath = streamFolderPictures+data.ts+".png";
 
@@ -131,8 +134,19 @@ io.on('connection', function(client){
 		  processImage(streamFolderEmotions, data.ts, base64Reloaded);
 
 	});
-});
+  client.on('soundData', function(data){
+    console.log("received sound data");
+    var streamFolder = '../data/'+data.id+'/';
+    var streamFolderSounds = '../data/'+data.id+'/sounds/';
+    var soundPath = streamFolderSounds+data.tx+".wav";
 
+    fs.writeFile(soundPath, data.soundData, function(err){
+      if (err) throw err
+      console.log('Audio saved.')
+     
+    });
+  });
+});
 io.listen(3002);
 
 module.exports = app;

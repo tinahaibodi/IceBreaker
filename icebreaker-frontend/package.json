@@ -6,6 +6,8 @@
     "react": "^16.1.0",
     "react-dom": "^16.1.0",
     "react-scripts": "1.0.17",
+    "recorder-js": "^1.0.7",
+    "recorderjs": "^1.0.1",
     "recordrtc": "^5.4.5",
     "socket.io-client": "^2.0.4"
   },

@@ -1,10 +1,19 @@
 import React, { Component } from 'react';
-import { captureUserMedia, guid, getTimeStamp, createRecorder } from './utils';
+import { captureUserMedia, guid, getTimeStamp} from './utils';
 import RecordRTC from 'recordrtc';
 import io from 'socket.io-client';
+import Recorder from 'recorder-js';
 
 const hasGetUserMedia = !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
                         navigator.mozGetUserMedia || navigator.msGetUserMedia);
+
+const audioContext =  new (window.AudioContext || window.webkitAudioContext)();
+
+const recorder = new Recorder(audioContext);
+navigator.mediaDevices.getUserMedia({audio: true})
+  .then(stream => recorder.init(stream))
+  .catch(err => console.log('Uh oh... unable to get stream...', err));
+
 const socket = io('http://localhost:3002');
 
 class WebcamRecorder extends Component {
@@ -23,6 +32,7 @@ class WebcamRecorder extends Component {
     this.startRecord = this.startRecord.bind(this);
     this.stopRecord = this.stopRecord.bind(this);
     this.snapshot = this.snapshot.bind(this);
+    this.snapshotSound = this.snapshotSound.bind(this);
   }
 
   componentDidMount() {  
@@ -65,6 +75,16 @@ class WebcamRecorder extends Component {
     socket.emit('videoData', { id: this.state.id, imageData: data, ts: getTimeStamp() });
   }
 
+  snapshotSound() {
+    console.log("snapshotSound");
+    recorder.stop().then(({blob, buffer}) => {
+      console.log("blob: "+ blob);
+      socket.emit('soundData', { id: this.state.id, soundData: blob, ts: getTimeStamp()});
+    });
+    // recorder.clear()
+    recorder.start()
+  }
+
   startRecord() {
     if(this.snapshotRecorder == null){
       
@@ -79,6 +99,12 @@ class WebcamRecorder extends Component {
       this.snapshotRecorder = setInterval(
         this.snapshot.bind(this)
       , 1000);
+
+      this.snapshotSoundRecorder = setInterval(
+        this.snapshotSound.bind(this)
+      , 6000);
+
+      recorder.start();
     }
 
   }
@@ -96,8 +122,12 @@ class WebcamRecorder extends Component {
           id: Math.floor(Math.random()*90000) + 10000
         }
       });
+      this.snapshotSound()
+      clearInterval(this.snapshotSoundRecorder);
+
     }
   }
+
 }
 
 export default WebcamRecorder;
