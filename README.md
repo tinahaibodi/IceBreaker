@@ -8,7 +8,8 @@ They say that what you say is not as important as how you say it. This seems to 
 
 Icebreaker is a web appliction that analyzes a candidate by putting them through simulated date-like questions and analyzing their performance with analytics and feedback to improve. 
 
-## How I built it
+## How we built it
+We built Icebreaker using Microsoft Azure Cloud APIs, Bootstrap and JS.  
 
 ## Challenges I ran into
 In terms of front-end design, one of the challenges that we ran into was adding CSS PreProcessors into the documentation. Using anatomic design structure we tried to organize the code with SASS tools to streamline development process. Overall, we had never integrated facial recognition using Microsoft Azure with a web application so that was a hurdle that we overcame. 
